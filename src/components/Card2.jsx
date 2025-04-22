@@ -9,6 +9,8 @@ import { toast } from 'react-toastify';
 const Card2 = ({id, name, price, image, qty}) => {
     let dispatch = useDispatch();
 
+
+
   return (
     <div className='w-full h-[120px] p-2 shadow-lg flex justify-between'>
         <div className='w-[60%] h-full flex gap-4'>

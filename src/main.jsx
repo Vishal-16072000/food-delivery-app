@@ -11,6 +11,6 @@ createRoot(document.getElementById('root')).render(
   <Provider store={store}>
     <UserContext>
       <App />
-    </UserContext>
+    </UserContext> 
   </Provider>
 )

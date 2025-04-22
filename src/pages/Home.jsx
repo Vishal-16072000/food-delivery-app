@@ -9,10 +9,14 @@ import { RxCross1 } from "react-icons/rx";
 import Card2 from '../components/Card2'
 import { useSelector } from 'react-redux'
 import { toast } from 'react-toastify'
+import { IoIosLogOut } from "react-icons/io";
+import { addDoc, collection } from 'firebase/firestore'
+import { fireDB } from '../firebase/firebaseConfig'
+import Modal from '../components/Modal'
 
 
 const Home = () => {
-  let {cate, setCate, input, showCart, setShowCart} = useContext(dataContext);  
+  let {cate, setCate, input, showCart, setShowCart} = useContext(dataContext); 
   let items = useSelector(state => state.cart);
   // console.log(items);
 
@@ -38,15 +42,92 @@ const Home = () => {
       setCate(newList);
     }
   }
+
+  const logout = () => {
+    localStorage.clear();
+    window.location.href = "/login";
+  }
+
+  const [name, setName] = useState('');
+  const [address, setAddress] = useState('');
+  const [pincode, setPincode] = useState('');
+  const [phonenumber, setPhoneNumber] = useState('');
+
+  const Order = async () => {
+    if(name=='' || address=='' || pincode=='' || phonenumber==''){
+      return toast.error("All fields are required");
+    }
+
+
+    const addressInfo = {
+      name,
+      address,
+      pincode,
+      phonenumber,
+      date : new Date().toLocaleString(
+        "en-US",
+        {
+          month : "short",
+          day: "2-digit", 
+          year: "numeric"
+        }
+      )
+    }
+
+    var options = {
+      key: "rzp_test_MGOWuApd5VoZ1H",
+      key_secret: "cSsaNmtvdI7IWPCTMNDPhcYR",
+      amount : parseInt(total * 100),
+      currency : "INR",
+      order_receipt : 'order_rcptid_' + name,
+      name : "Food Delivery",
+      description : "for testing purpose",
+      handler : function(response){
+        toast.success("Order Placed!!");
+        const paymentId = response.razorpay_payment_id
+
+        const orderInfo = {
+          items,
+          addressInfo,
+          date : new Date().toLocaleString(
+        "en-US",
+        {
+          month : "short",
+          day: "2-digit", 
+          year: "numeric"
+        }
+      ),
+      email : JSON.parse(localStorage.getItem("user")).user.email,
+      userid : JSON.parse(localStorage.getItem("user")).user.uid,
+      paymentId
+        }
+
+        try{
+          const result = collection(fireDB, "orders");
+          addDoc(result, orderInfo);
+
+        } catch(error){
+          // console.log(error);
+        }
+      }
+    }
+
+    var pay = new window.Razorpay(options);
+    pay.open();
+    console.log(pay)
+  }
+
   
+  
+
   return (
     <div className="w-[100%] h-full min-h-screen bg-slate-200">
         <Nav/>
         {input=="" ? 
               <div className='w-[100%] flex flex-wrap justify-center gap-5 py-4'>
-                  {Categories.map((Item) => {
+                  {Categories.map((Item, index) => {
                   return (
-                      <div className=' bg-white w-[120px] h-[130px] flex flex-col gap-5 font-bold text-gray-500 justify-center p-4 shadow-md rounded-md hover:bg-green-100 transition-all duration-200' onClick={() => filter(Item.name)}>
+                      <div key={index} className=' bg-white w-[120px] h-[130px] flex flex-col gap-5 font-bold text-gray-500 justify-center p-4 shadow-md rounded-md hover:bg-green-100 transition-all duration-200' onClick={() => filter(Item.name)}>
                           {Item.image}
                           {Item.name}
                       </div>
@@ -65,6 +146,7 @@ const Home = () => {
             <div>No Dish Found</div>}
             
         </div>
+
 
 
         <div className={`w-full md:w-[40vw] h-[100%] fixed bg-white top-0 right-0 shadow-xl p-3 transition-all duration-500 flex flex-col items-center overflow-auto ${showCart ? "translate-x-0" : "translate-x-full"}`}>
@@ -102,12 +184,18 @@ const Home = () => {
             <span className='text-lg text-green-400 font-semibold text-2xl'>Rs {total}/-</span>
           </div>
 
-          <button className='w-[80%] bg-green-500 p-3 rounded-lg font-semibold text-white hover:bg-green-300 transition-all' onClick={() => toast.success("Order Placed!")}>Place Order</button>
-          </> : 
+          {/* <button className='w-[80%] bg-green-500 p-3 rounded-lg font-semibold text-white hover:bg-green-300 transition-all' onClick={() => toast.success("Order Placed!")}>Order</button> */}
+          <Modal name={name} address={address} pincode={pincode} phoneNumber={phonenumber} setName={setName} setAddress={setAddress} setPincode={setPincode} setPhoneNumber={setPhoneNumber} Order={Order} />
+
+          </> :
           <div className='text-center text-2xl text-gray-400 font-semibold pt-5'>
           Empty Cart
-          </div>}
+          </div>
+          }
           
+        </div>
+        <div className='flex justify-end p-5 mt-40'>
+          <button onClick={logout} className=' bg-green-500 text-white font-medium py-1 px-3 rounded-lg'><span className='flex items-center gap-1'>Logout <IoIosLogOut className=' text-white text-xl'/></span></button>
         </div>
     </div>
   )

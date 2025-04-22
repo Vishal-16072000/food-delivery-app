@@ -3,6 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "homepage": "https://Vishal-16072000.github.io/food-delivery-app",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -10,11 +11,14 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@headlessui/react": "^2.2.2",
     "@reduxjs/toolkit": "^2.5.1",
+    "firebase": "^11.6.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-icons": "^5.5.0",
     "react-redux": "^9.2.0",
+    "react-router-dom": "^7.5.1",
     "react-toastify": "^11.0.5"
   },
   "devDependencies": {

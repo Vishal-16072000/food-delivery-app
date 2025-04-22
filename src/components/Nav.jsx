@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { SiFoodpanda } from "react-icons/si";
 import { IoSearchOutline } from "react-icons/io5";
 import { FiShoppingBag } from "react-icons/fi";
@@ -7,8 +7,8 @@ import { useSelector } from 'react-redux';
 
 const Nav = () => {
   let items = useSelector((state) => state.cart);
-  
 
+  
  let {input, setInput, showCart, setShowCart} = useContext(dataContext);
   return (
     <div className='w-full h-[70px] flex items-center px-3 md:px-10 justify-between'>

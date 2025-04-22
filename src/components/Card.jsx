@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import image1 from "../assets/image1.avif";
 import { LuLeafyGreen } from "react-icons/lu";
 import { GiChickenOven } from "react-icons/gi";
@@ -9,6 +9,18 @@ import { toast } from 'react-toastify';
 
 const Card = ({id, name, image, price, type}) => {
     const dispatch = useDispatch();
+
+    const cartItems = useSelector((state) => state.cart);
+
+    const AddToCart = () => {
+        dispatch(AddItem({ id, name, price, image, qty: 1 }));
+        toast.success("Product added to cart!");
+    }
+
+    useEffect(() => {
+        localStorage.setItem('cart', JSON.stringify(cartItems));
+    }, [cartItems])
+
   return (
     <div className='w-[300px] h-[400px] bg-white p-4 rounded-lg flex flex-col shadow-lg gap-3 hover:border-2 hover:border-green-300'>
         <div className='w-full h-[60%] overflow-hidden rounded-lg'>
@@ -29,7 +41,7 @@ const Card = ({id, name, image, price, type}) => {
                 <span>{type}</span>
             </div>
         </div>
-        <button className='w-full bg-green-500 p-3 rounded-lg font-semibold text-white hover:bg-green-300 transition-all' onClick={()=>{dispatch(AddItem({id : id, name : name, price :  price, image :  image, qty : 1})); toast.success("item added")}}>Add to dish</button>
+        <button className='w-full bg-green-500 p-3 rounded-lg font-semibold text-white hover:bg-green-300 transition-all' onClick={AddToCart}>Add to dish</button>
     </div>
   )
 }

@@ -7,6 +7,7 @@ const UserContext = (props) => {
     const [input, setInput] = useState("");
     let [cate, setCate] = useState(food_items);
     let [showCart, setShowCart] = useState(false);
+    let [loading, setLoading] = useState(false);
     const data = {
         input,
         setInput,
@@ -14,6 +15,8 @@ const UserContext = (props) => {
         setCate,
         showCart,
         setShowCart,
+        loading,
+        setLoading
     }
   return (
     <dataContext.Provider value={data}>
